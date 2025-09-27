@@ -1,0 +1,61 @@
+# ===== Backend (.NET) =====
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code settings
+.vscode/
+
+# Logs
+*.log
+logs/
+log.txt
+
+# Environment files
+*.env
+
+# Database files (if any local DB used)
+*.mdf
+*.ldf
+
+# Backup & publish
+*.bak
+*.db
+*.pdb
+*.publish.xml
+
+# Temporary files
+~$*
+*.tmp
+*.temp
+
+# ===== Frontend (React) =====
+node_modules/
+build/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Editor / OS files
+.DS_Store
+Thumbs.db
+
+# ===== General =====
+# IDE/project settings
+.idea/
+*.iml
+
+# Cache
+.cache/
+*.swp
