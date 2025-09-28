@@ -3,6 +3,7 @@ using System;
 using ExpenseTrackApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseTrackApi.Migrations
 {
     [DbContext(typeof(ExpenseContext))]
-    partial class ExpenseContextModelSnapshot : ModelSnapshot
+    [Migration("20250928140609_AddCategoryTable")]
+    partial class AddCategoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -30,43 +33,6 @@ namespace ExpenseTrackApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Food"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Travel"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Shopping"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Bills"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Health"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Entertainment"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Others"
-                        });
                 });
 
             modelBuilder.Entity("ExpenseTrackApi.Models.Expense", b =>

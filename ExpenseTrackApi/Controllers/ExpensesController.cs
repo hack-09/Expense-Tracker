@@ -19,7 +19,9 @@ namespace ExpenseTrackApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetExpenses()
         {
-            var expenses = await _context.Expenses.ToListAsync();
+            var expenses = await _context.Expenses
+                .Include(e => e.Category)
+                .ToListAsync();
             return Ok(expenses);
         }
 
@@ -55,5 +57,35 @@ namespace ExpenseTrackApi.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> FilterExpenses(
+            int? categoryId,
+            DateTime? fromDate,
+            DateTime? toDate,
+            decimal? minAmount,
+            decimal? maxAmount)
+        {
+            var query = _context.Expenses.AsQueryable();
+
+            if (categoryId.HasValue)
+                query = query.Where(e => e.CategoryId == categoryId);
+
+            if (fromDate.HasValue)
+                query = query.Where(e => e.Date >= fromDate);
+
+            if (toDate.HasValue)
+                query = query.Where(e => e.Date <= toDate);
+
+            if (minAmount.HasValue)
+                query = query.Where(e => e.Amount >= minAmount);
+
+            if (maxAmount.HasValue)
+                query = query.Where(e => e.Amount <= maxAmount);
+
+            var expenses = await query.ToListAsync();
+            return Ok(expenses);
+        }
+
     }
 }
