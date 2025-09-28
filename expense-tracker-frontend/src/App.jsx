@@ -1,5 +1,6 @@
 import React from "react";
 import Expenses from "./Expenses";
+import "./App.css";
 
 function App() {
   return (
