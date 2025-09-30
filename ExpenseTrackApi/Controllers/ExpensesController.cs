@@ -68,8 +68,8 @@ namespace ExpenseTrackApi.Controllers
         public async Task<IActionResult> UpdateExpense(int id, [FromBody] Expense updatedExpense)
         {
             var userId = GetUserId();
-            if (id != updatedExpense.Id || updatedExpense.UserId != userId)
-                return BadRequest("Expense ID mismatch or unauthorized");
+            if (id != updatedExpense.Id)
+                return BadRequest("Expense ID mismatch "+"id : "+id+" updatedExpense.Id : "+updatedExpense.Id);
             var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
             if (expense == null) return NotFound();
 

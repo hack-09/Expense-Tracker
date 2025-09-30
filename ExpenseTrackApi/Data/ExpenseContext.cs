@@ -23,7 +23,8 @@ namespace ExpenseTrackApi.Data
                 new Category { Id = 4, Name = "Bills"},
                 new Category { Id = 5, Name = "Health"},
                 new Category { Id = 6, Name = "Entertainment"},
-                new Category { Id = 7, Name = "Others"}
+                new Category { Id = 7, Name = "Education"},
+                new Category { Id = 8, Name = "Others"}
             );
         }
     }

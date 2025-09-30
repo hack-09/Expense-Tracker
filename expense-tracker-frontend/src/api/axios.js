@@ -11,7 +11,6 @@ api.interceptors.request.use(
   (config) => {
     try {
       const token = localStorage.getItem("token");
-      console.log("Attaching token:", token);  
       if (token) {
         // preserve existing headers (e.g. Content-Type) while adding Authorization
         config.headers = config.headers || {};
