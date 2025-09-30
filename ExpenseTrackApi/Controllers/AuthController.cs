@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -45,13 +46,13 @@ namespace ExpenseTrackApi.Controllers
 
         // ✅ LOGIN
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] User login)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            if (string.IsNullOrWhiteSpace(login.Username) || string.IsNullOrWhiteSpace(login.PasswordHash))
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest("Username and Password are required.");
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == login.Username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(login.PasswordHash, user.PasswordHash))
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
                 return Unauthorized("Invalid username or password.");
 
             // Generate JWT Token
@@ -66,10 +67,10 @@ namespace ExpenseTrackApi.Controllers
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("id", user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role ?? "user"),
+                    new Claim(ClaimTypes.Role, user.Role ?? "User"),
                     new Claim(ClaimTypes.Name, user.Username)
                 }),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature
@@ -81,5 +82,14 @@ namespace ExpenseTrackApi.Controllers
 
             return Ok(new { Token = tokenString });
         }
+    }
+
+    public class LoginRequest
+    {
+        [Required]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
     }
 }

@@ -18,14 +18,21 @@ namespace ExpenseTrackApi.Controllers
             _context = context;
         }
 
+        private int GetUserId()
+        {
+            var userIdClaim = User.FindFirst("id");
+            if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+                throw new UnauthorizedAccessException("User ID claim not found.");
+            return int.Parse(userIdClaim.Value);
+        }
+
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> GetExpenses(int limit = 100)
         {
-            var userId = int.Parse(User.FindFirst("id").Value);
+            var userId = GetUserId();
             var expenses = await _context.Expenses
-                                .Include(e => e.Category)
                                 .Where(e => e.UserId == userId)
+                                .Include(e => e.Category)
                                 .OrderByDescending(e => e.Date) // optional: newest first
                                 .Take(limit) // restrict number of results
                                 .ToListAsync();
@@ -35,7 +42,7 @@ namespace ExpenseTrackApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddExpense([FromBody] Expense expense)
         {
-            var userId = int.Parse(User.FindFirst("id")?.Value ?? "0");
+            var userId = GetUserId();
             expense.UserId = userId;
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
@@ -45,9 +52,9 @@ namespace ExpenseTrackApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpense(int id)
         {
-            var userId = int.Parse(User.FindFirst("id").Value);
+            var userId = GetUserId();
 
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
             if (expense == null) return NotFound();
 
             if (expense.UserId != userId) return Forbid();
@@ -60,10 +67,10 @@ namespace ExpenseTrackApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateExpense(int id, [FromBody] Expense updatedExpense)
         {
-            var userId = int.Parse(User.FindFirst("id").Value);
+            var userId = GetUserId();
             if (id != updatedExpense.Id || updatedExpense.UserId != userId)
                 return BadRequest("Expense ID mismatch or unauthorized");
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
             if (expense == null) return NotFound();
 
             if (expense.UserId != userId) return Forbid();
@@ -85,7 +92,7 @@ namespace ExpenseTrackApi.Controllers
             decimal? minAmount,
             decimal? maxAmount)
         {
-            var userId = int.Parse(User.FindFirst("id").Value);
+            var userId = GetUserId();
             // Basic validation
             if (minAmount < 0 || maxAmount < 0) return BadRequest("Amounts must be non-negative");
             if (minAmount.HasValue && maxAmount.HasValue && minAmount > maxAmount)

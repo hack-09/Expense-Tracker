@@ -18,8 +18,6 @@ namespace ExpenseTrackApi.Models
         public required string PasswordHash { get; set; }
 
         [Required]
-        public string Role { get; set; } = "user";
-
-        public required ICollection<Expense> Expenses { get; set; }
+        public string Role { get; set; } = "User";
     }
 }

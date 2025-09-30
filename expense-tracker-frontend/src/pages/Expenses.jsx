@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function Expenses() {
+  const navigate = useNavigate();
+
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState("");
@@ -21,9 +24,6 @@ function Expenses() {
   const [toDate, setToDate] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
-
-  const API_URL = "http://localhost:5237/api/expenses";
-  const CATEGORY_URL = "http://localhost:5237/api/categories";
 
   // Load dark mode preference from localStorage
   useEffect(() => {
@@ -47,11 +47,16 @@ function Expenses() {
     fetchCategories();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // remove token
+    navigate("/login"); // redirect to login page
+  };
+
   const fetchExpenses = async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.get(API_URL);
+      const res = await api.get("/expenses"); // <-- use api, not axios
       setExpenses(res.data);
     } catch (err) {
       console.error(err);
@@ -63,7 +68,7 @@ function Expenses() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(CATEGORY_URL);
+      const res = await api.get("/categories");
       setCategories(res.data);
     } catch (err) {
       console.error(err);
@@ -78,7 +83,7 @@ function Expenses() {
 
     setError("");
     try {
-      const res = await axios.post(API_URL, {
+      const res = await api.post("/expenses", {
         title: title.trim(),
         amount: parseFloat(amount),
         categoryId: parseInt(categoryId),
@@ -100,7 +105,7 @@ function Expenses() {
 
     setError("");
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await api.delete(`/expenses/${id}`);
       setExpenses(expenses.filter(exp => exp.id !== id));
     } catch (err) {
       console.error(err);
@@ -122,7 +127,7 @@ function Expenses() {
 
     setError("");
     try {
-      await axios.put(`${API_URL}/${id}`, {
+      await api.put(`/expenses/${id}`, {
         id,
         title: editTitle.trim(),
         amount: parseFloat(editAmount),
@@ -151,7 +156,7 @@ function Expenses() {
       if (minAmount) params.minAmount = minAmount;
       if (maxAmount) params.maxAmount = maxAmount;
 
-      const res = await axios.get(`${API_URL}/filter`, { params });
+      const res = await api.get("/expenses/filter", { params });
       setExpenses(res.data);
     } catch (err) {
       console.error(err);
@@ -264,6 +269,13 @@ function Expenses() {
                   <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
                 </svg>
               )}
+            </button>
+            
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Logout
             </button>
           </div>
         </div>
