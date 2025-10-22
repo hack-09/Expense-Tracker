@@ -12,7 +12,7 @@ var key = Encoding.ASCII.GetBytes(secretKey);
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ExpenseContext>(options =>
-    options.UseSqlite("Data Source=expenses.db")); // SQLite file
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -41,14 +41,25 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
-                .AllowAnyMethod()
+            policy.WithOrigins(
+                    "http://localhost:5173",
+                    "http://127.0.0.1:5173",
+                    "http://frontend",       
+                    "http://frontend:80"     
+                )
                 .AllowAnyHeader()
+                .AllowAnyMethod()
                 .AllowCredentials();
         });
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ExpenseContext>();
+    db.Database.Migrate();
+}
 
 // Middleware pipeline
 if (app.Environment.IsDevelopment())
@@ -57,8 +68,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowReactApp");
 app.UseHttpsRedirection();
+app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
