@@ -36,17 +36,13 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Enable CORS for React frontend
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy =>
         {
-            policy.WithOrigins(
-                    "http://localhost:5173",
-                    "http://127.0.0.1:5173",
-                    "http://frontend",       
-                    "http://frontend:80"     
-                )
+            policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
