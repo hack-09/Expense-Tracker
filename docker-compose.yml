@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./ExpenseTrackApi
+    container_name: expense-backend
+    ports:
+      - "5237:5237"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5237
+      - ConnectionStrings__DefaultConnection=Host=expense-db;Port=5432;Database=ExpenseTrackerDb;Username=myuser;Password=mypassword
+    depends_on:
+      - expense-db
+    networks:
+      - expense-net
+
+  expense-db:
+    image: postgres:16
+    container_name: expense-db
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: ExpenseTrackerDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - expense-net
+
+volumes:
+  pgdata:
+
+networks:
+  expense-net:
+    driver: bridge
