@@ -42,7 +42,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         policy =>
         {
-            policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
+            policy.WithOrigins("https://expense-tracker-gold-eta.vercel.app/")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
