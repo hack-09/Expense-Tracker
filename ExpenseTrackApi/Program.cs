@@ -36,16 +36,15 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Enable CORS for React frontend
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy =>
         {
-            policy.WithOrigins("https://expense-tracker-gold-eta.vercel.app/")
+            policy.WithOrigins(allowedOrigins)
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyMethod();
         });
 });
 
