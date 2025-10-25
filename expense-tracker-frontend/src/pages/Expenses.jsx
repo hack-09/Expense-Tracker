@@ -46,14 +46,6 @@ function Expenses() {
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
 
-  // Stats
-  const [stats, setStats] = useState({
-    total: 0,
-    thisMonth: 0,
-    lastMonth: 0,
-    average: 0
-  });
-
   // Color palette for charts
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FF6B6B', '#4ECDC4'];
 
@@ -79,18 +71,12 @@ function Expenses() {
     fetchCategories();
   }, []);
 
-  // Calculate stats when expenses change
+  // Fetch dashboard data when tab changes to dashboard or when expenses update
   useEffect(() => {
-    calculateStats();
-    prepareChartData();
-  }, [expenses]);
-
-  // Fetch dashboard data when tab changes to dashboard
-  useEffect(() => {
-    if (activeTab === "dashboard" && expenses.length > 0) {
+    if (activeTab === "dashboard") {
       fetchDashboardData();
     }
-  }, [activeTab, expenses]);
+  }, [activeTab, expenses]); // Re-fetch when expenses change or tab changes
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -125,132 +111,21 @@ function Expenses() {
   const fetchDashboardData = async () => {
     setDashboardLoading(true);
     try {
-      // If you have backend endpoints for dashboard data
-      // const [summaryRes, chartRes] = await Promise.all([
-      //   api.get("/expenses/summary"),
-      //   api.get("/expenses/chart-data")
-      // ]);
-      // setDashboardData({
-      //   summary: summaryRes.data,
-      //   chartData: chartRes.data
-      // });
-
-      // For now, we'll use client-side calculated data
-      const summary = calculateDashboardSummary();
-      const chartData = prepareDashboardChartData();
+      const [summaryRes, chartRes] = await Promise.all([
+        api.get("/expenses/summary"),
+        api.get("/expenses/chart-data")
+      ]);
       
       setDashboardData({
-        summary,
-        chartData
+        summary: summaryRes.data,
+        chartData: chartRes.data
       });
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
+      setError("Failed to load dashboard data");
     } finally {
       setDashboardLoading(false);
     }
-  };
-
-  const calculateStats = () => {
-    const now = new Date();
-    const thisMonth = now.getMonth();
-    const thisYear = now.getFullYear();
-    const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
-    const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
-
-    const thisMonthExpenses = expenses.filter(exp => {
-      const expDate = new Date(exp.date);
-      return expDate.getMonth() === thisMonth && expDate.getFullYear() === thisYear;
-    });
-
-    const lastMonthExpenses = expenses.filter(exp => {
-      const expDate = new Date(exp.date);
-      return expDate.getMonth() === lastMonth && expDate.getFullYear() === lastMonthYear;
-    });
-
-    const total = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
-    const thisMonthTotal = thisMonthExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
-    const lastMonthTotal = lastMonthExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
-    const average = expenses.length > 0 ? total / expenses.length : 0;
-
-    setStats({
-      total,
-      thisMonth: thisMonthTotal,
-      lastMonth: lastMonthTotal,
-      average
-    });
-  };
-
-  const calculateDashboardSummary = () => {
-    const totalSpent = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
-    const daysWithExpenses = new Set(expenses.map(exp => new Date(exp.date).toDateString())).size;
-    const averagePerDay = daysWithExpenses > 0 ? totalSpent / daysWithExpenses : 0;
-
-    // Find top category
-    const categoryTotals = {};
-    expenses.forEach(exp => {
-      const categoryName = getCategoryName(exp.categoryId);
-      categoryTotals[categoryName] = (categoryTotals[categoryName] || 0) + parseFloat(exp.amount);
-    });
-
-    const topCategory = Object.keys(categoryTotals).length > 0 
-      ? Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0][0]
-      : "No expenses";
-
-    return {
-      totalSpent,
-      averagePerDay: averagePerDay.toFixed(2),
-      topCategory
-    };
-  };
-
-  const prepareDashboardChartData = () => {
-    // Category data for pie chart
-    const categoryData = {};
-    expenses.forEach(expense => {
-      const categoryName = getCategoryName(expense.categoryId);
-      if (!categoryData[categoryName]) {
-        categoryData[categoryName] = 0;
-      }
-      categoryData[categoryName] += parseFloat(expense.amount);
-    });
-
-    const byCategory = Object.keys(categoryData).map((category, index) => ({
-      category,
-      amount: categoryData[category],
-      color: COLORS[index % COLORS.length]
-    }));
-
-    // Monthly data for line chart (last 6 months)
-    const last6Months = [];
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date();
-      date.setMonth(date.getMonth() - i);
-      last6Months.push({
-        month: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        amount: 0
-      });
-    }
-
-    const byMonth = [...last6Months];
-    
-    expenses.forEach(expense => {
-      const expenseDate = new Date(expense.date);
-      const monthYear = expenseDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-      const monthData = byMonth.find(month => month.month === monthYear);
-      if (monthData) {
-        monthData.amount += parseFloat(expense.amount);
-      }
-    });
-
-    return {
-      byCategory,
-      byMonth
-    };
-  };
-
-  const prepareChartData = () => {
-    // This function is for the existing charts in expenses tab
-    // Keep your existing chart preparation logic here
   };
 
   const addExpense = async (e) => {
@@ -432,21 +307,33 @@ function Expenses() {
     const stats = [
       {
         title: "Total Spent",
-        value: `₹${summary.totalSpent}`,
+        value: formatCurrency(summary.totalSpent),
         color: "text-blue-600",
-        icon: "💰"
+        icon: (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+          </svg>
+        )
       },
       {
         title: "Avg Per Day",
-        value: `₹${summary.averagePerDay}`,
+        value: formatCurrency(summary.averagePerDay),
         color: "text-green-600",
-        icon: "📅"
+        icon: (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        )
       },
       {
         title: "Top Category",
         value: summary.topCategory,
         color: "text-purple-600",
-        icon: "🏆"
+        icon: (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        )
       }
     ];
 
@@ -463,7 +350,7 @@ function Expenses() {
                   {stat.value}
                 </p>
               </div>
-              <div className={`text-2xl ${darkMode ? "bg-gray-700" : "bg-gray-100"} p-3 rounded-xl`}>
+              <div className={`p-3 rounded-xl ${darkMode ? "bg-gray-700" : "bg-gray-100"}`}>
                 {stat.icon}
               </div>
             </div>
@@ -525,7 +412,7 @@ function Expenses() {
               <YAxis 
                 stroke={darkMode ? "#9CA3AF" : "#6B7280"}
                 fontSize={12}
-                tickFormatter={(value) => `₹${value}`}
+                tickFormatter={(value) => formatCurrency(value)}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
@@ -556,7 +443,7 @@ function Expenses() {
       );
     }
 
-    if (expenses.length === 0) {
+    if (!dashboardData.summary || !dashboardData.chartData) {
       return (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📊</div>
@@ -589,6 +476,50 @@ function Expenses() {
 
         <DashboardStats />
         <DashboardCharts />
+
+        {/* Category Breakdown Table */}
+        {dashboardData.summary.categoryBreakdown && (
+          <div className={`rounded-2xl shadow-lg border p-6 mt-8 ${darkClasses.card}`}>
+            <h3 className={`text-xl font-semibold mb-4 ${darkClasses.text}`}>
+              Category Breakdown
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className={darkClasses.tableHeader}>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Category</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Amount</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">Percentage</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {Object.entries(dashboardData.summary.categoryBreakdown)
+                    .sort(([,a], [,b]) => b - a)
+                    .map(([category, amount]) => {
+                      const percentage = ((amount / dashboardData.summary.totalSpent) * 100).toFixed(1);
+                      return (
+                        <tr key={category} className={darkClasses.tableRow}>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className={`font-medium ${darkClasses.text}`}>{category}</span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className={`font-bold ${darkMode ? "text-green-400" : "text-green-600"}`}>
+                              {formatCurrency(amount)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className={darkClasses.textSecondary}>
+                              {percentage}%
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -672,6 +603,30 @@ function Expenses() {
           </div>
         </div>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+          <div className={`rounded-xl p-4 border ${darkClasses.error} shadow-lg`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium">{error}</span>
+              </div>
+              <button
+                onClick={() => setError("")}
+                className={`p-1 rounded ${darkMode ? "hover:bg-red-800" : "hover:bg-red-100"}`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="py-8 px-4 sm:px-6 lg:px-8">
