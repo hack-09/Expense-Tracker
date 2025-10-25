@@ -127,52 +127,87 @@ namespace ExpenseTrackApi.Controllers
             return Ok(expenses);
         }
 
+        // Controllers/ExpensesController.cs
         [HttpGet("summary")]
-        public async Task<IActionResult> GetExpenseSummary()
+        public async Task<ActionResult<object>> GetExpenseSummary([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             var userId = GetUserId();
-            var expenses = await _context.Expenses
-                .Where(e => e.UserId == userId)
-                .ToListAsync();
 
-            var total = expenses.Sum(e => e.Amount);
-            var avgPerDay = expenses
-                .GroupBy(e => e.Date.Date)
-                .Select(g => g.Sum(e => e.Amount))
-                .Average();
+            var query = _context.Expenses
+                .Include(e => e.Category)
+                .Where(e => e.UserId == userId);
 
-            var byCategory = expenses
-                .GroupBy(e => e.Category?.Name ?? "Uncategorized")
-                .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
+            if (startDate.HasValue)
+                query = query.Where(e => e.Date >= startDate.Value);
 
-            var topCategory = byCategory.OrderByDescending(c => c.Value).First().Key;
+            if (endDate.HasValue)
+                query = query.Where(e => e.Date <= endDate.Value);
+
+            var expenses = await query.ToListAsync();
+
+            var totalSpent = expenses.Sum(e => e.Amount);
+
+            decimal averagePerDay = 0;
+            if (expenses.Any())
+            {
+                var minDate = expenses.Min(e => e.Date);
+                var maxDate = expenses.Max(e => e.Date);
+                var days = (maxDate - minDate).TotalDays + 1;
+                averagePerDay = totalSpent / (decimal)days;
+            }
+
+            var topCategory = expenses
+                .Where(e => e.Category != null)
+                .GroupBy(e => e.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    Total = g.Sum(e => e.Amount)
+                })
+                .OrderByDescending(x => x.Total)
+                .FirstOrDefault()?.CategoryName ?? "No expenses";
 
             return Ok(new
             {
-                totalSpent = total,
-                averagePerDay = avgPerDay,
-                topCategory,
-                categoryBreakdown = byCategory
+                TotalSpent = totalSpent,
+                AveragePerDay = averagePerDay,
+                TopCategory = topCategory
             });
         }
 
         [HttpGet("chart-data")]
-        public async Task<IActionResult> GetChartData()
+        public async Task<ActionResult<object>> GetChartData()
         {
             var userId = GetUserId();
             var expenses = await _context.Expenses
+                .Include(e => e.Category)
                 .Where(e => e.UserId == userId)
                 .ToListAsync();
 
-            var byMonth = expenses
-                .GroupBy(e => e.Date.ToString("MMM"))
-                .Select(g => new { month = g.Key, amount = g.Sum(e => e.Amount) });
-
             var byCategory = expenses
                 .GroupBy(e => e.Category?.Name ?? "Uncategorized")
-                .Select(g => new { category = g.Key, amount = g.Sum(e => e.Amount) });
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    Amount = g.Sum(e => e.Amount)
+                })
+                .OrderByDescending(x => x.Amount)
+                .ToList();
 
-            return Ok(new { byMonth, byCategory });
+            var sixMonthsAgo = DateTime.Now.AddMonths(-6);
+            var byMonth = expenses
+                .Where(e => e.Date >= sixMonthsAgo)
+                .GroupBy(e => new DateTime(e.Date.Year, e.Date.Month, 1))
+                .Select(g => new
+                {
+                    Month = g.Key.ToString("yyyy-MM"),
+                    Amount = g.Sum(e => e.Amount)
+                })
+                .OrderBy(x => x.Month)
+                .ToList();
+
+            return Ok(new { ByCategory = byCategory, ByMonth = byMonth });
         }
+
     }
 }

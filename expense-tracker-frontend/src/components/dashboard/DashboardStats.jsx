@@ -1,6 +1,6 @@
 // src/components/dashboard/DashboardStats.jsx
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import React from 'react';
+import { formatCurrency } from '../../utils/currencyFormatter';
 
 const DashboardStats = ({ summary, darkMode }) => {
   const darkClasses = {
@@ -12,7 +12,7 @@ const DashboardStats = ({ summary, darkMode }) => {
   const stats = [
     {
       title: "Total Spent",
-      value: `₹${summary.totalSpent}`,
+      value: summary.totalSpent,
       color: "text-blue-600",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +22,7 @@ const DashboardStats = ({ summary, darkMode }) => {
     },
     {
       title: "Avg Per Day",
-      value: `₹${summary.averagePerDay.toFixed(2)}`,
+      value: summary.averagePerDay,
       color: "text-green-600",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,23 +45,21 @@ const DashboardStats = ({ summary, darkMode }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       {stats.map((stat, index) => (
-        <Card key={index} className={`shadow-lg border ${darkClasses.card}`}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className={`text-lg font-medium ${darkClasses.textMuted}`}>
-                  {stat.title}
-                </h3>
-                <p className={`text-2xl font-bold mt-2 ${stat.color}`}>
-                  {stat.value}
-                </p>
-              </div>
-              <div className={`p-3 rounded-xl ${darkMode ? "bg-gray-700" : "bg-gray-100"}`}>
-                {stat.icon}
-              </div>
+        <div key={index} className={`rounded-2xl shadow-lg border p-6 ${darkClasses.card}`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className={`text-lg font-medium ${darkClasses.textMuted}`}>
+                {stat.title}
+              </h3>
+              <p className={`text-2xl font-bold mt-2 ${stat.color}`}>
+                {stat.title === "Top Category" ? stat.value : formatCurrency(stat.value)}
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className={`p-3 rounded-xl ${darkMode ? "bg-gray-700" : "bg-gray-100"}`}>
+              {stat.icon}
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );
