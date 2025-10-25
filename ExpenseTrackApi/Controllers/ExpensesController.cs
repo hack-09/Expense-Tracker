@@ -127,5 +127,52 @@ namespace ExpenseTrackApi.Controllers
             return Ok(expenses);
         }
 
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetExpenseSummary()
+        {
+            var userId = GetUserId();
+            var expenses = await _context.Expenses
+                .Where(e => e.UserId == userId)
+                .ToListAsync();
+
+            var total = expenses.Sum(e => e.Amount);
+            var avgPerDay = expenses
+                .GroupBy(e => e.Date.Date)
+                .Select(g => g.Sum(e => e.Amount))
+                .Average();
+
+            var byCategory = expenses
+                .GroupBy(e => e.Category.Name)
+                .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
+
+            var topCategory = byCategory.OrderByDescending(c => c.Value).First().Key;
+
+            return Ok(new
+            {
+                totalSpent = total,
+                averagePerDay = avgPerDay,
+                topCategory,
+                categoryBreakdown = byCategory
+            });
+        }
+
+        [HttpGet("chart-data")]
+        public async Task<IActionResult> GetChartData()
+        {
+            var userId = GetUserId();
+            var expenses = await _context.Expenses
+                .Where(e => e.UserId == userId)
+                .ToListAsync();
+
+            var byMonth = expenses
+                .GroupBy(e => e.Date.ToString("MMM"))
+                .Select(g => new { month = g.Key, amount = g.Sum(e => e.Amount) });
+
+            var byCategory = expenses
+                .GroupBy(e => e.Category.Name)
+                .Select(g => new { category = g.Key, amount = g.Sum(e => e.Amount) });
+
+            return Ok(new { byMonth, byCategory });
+        }
     }
 }

@@ -3,12 +3,15 @@ using ExpenseTrackApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var secretKey = builder.Configuration["SECRET_KEY"];
 if (string.IsNullOrEmpty(secretKey))
     throw new InvalidOperationException("SECRET_KEY configuration is missing.");
 var key = Encoding.ASCII.GetBytes(secretKey);
+
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ExpenseContext>(options =>
@@ -35,6 +38,14 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
+builder.Services.AddRateLimiter(_ => _
+    .AddFixedWindowLimiter("fixed", options =>
+    {
+        options.PermitLimit = 20;
+        options.Window = TimeSpan.FromSeconds(10);
+    }));
+
+
 // Enable CORS for React frontend
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
@@ -49,6 +60,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseRateLimiter();
 
 using (var scope = app.Services.CreateScope())
 {
