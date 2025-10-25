@@ -142,7 +142,7 @@ namespace ExpenseTrackApi.Controllers
                 .Average();
 
             var byCategory = expenses
-                .GroupBy(e => e.Category.Name)
+                .GroupBy(e => e.Category?.Name ?? "Uncategorized")
                 .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
 
             var topCategory = byCategory.OrderByDescending(c => c.Value).First().Key;
@@ -169,7 +169,7 @@ namespace ExpenseTrackApi.Controllers
                 .Select(g => new { month = g.Key, amount = g.Sum(e => e.Amount) });
 
             var byCategory = expenses
-                .GroupBy(e => e.Category.Name)
+                .GroupBy(e => e.Category?.Name ?? "Uncategorized")
                 .Select(g => new { category = g.Key, amount = g.Sum(e => e.Amount) });
 
             return Ok(new { byMonth, byCategory });
