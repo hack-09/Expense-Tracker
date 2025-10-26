@@ -48,7 +48,8 @@ function Expenses() {
   // Fetch dashboard data when tab changes to dashboard or when expenses update
   useEffect(() => {
     if (activeTab === "dashboard") {
-      fetchDashboardData();
+      if(dashboardData.summary === null || dashboardData.chartData === null)
+        fetchDashboardData();
     }
   }, [activeTab, expenses]);
 
