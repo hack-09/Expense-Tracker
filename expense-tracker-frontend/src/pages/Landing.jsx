@@ -1,11 +1,10 @@
 // Landing.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaChartPie, FaLock, FaRocket, FaUser, FaStar, FaPlay, FaPause, FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token"); // check if user is logged in
   const [activeTab, setActiveTab] = useState("overview");
   const [isPlaying, setIsPlaying] = useState(true);
   const statsRef = useRef(null);
@@ -15,6 +14,8 @@ const Landing = () => {
     savings: 0
   });
 
+  // Check if user is already logged in
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (token) {
       // If user is already logged in, redirect to dashboard
@@ -187,7 +188,7 @@ const Landing = () => {
               Login
             </button>
             <button
-              onClick={() => navigate("/preview")}
+              onClick={() => navigate("/preview")} // Changed from /expenses to /preview
               className="bg-transparent text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transition transform border-2 border-white/50 hover:border-white"
             >
               Live Demo
@@ -444,30 +445,30 @@ const Landing = () => {
             <div>
               <h4 className="text-white font-semibold mb-4">Product</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white transition">Features</a></li>
-                <li><a href="#" className="hover:text-white transition">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition">API</a></li>
-                <li><a href="#" className="hover:text-white transition">Integrations</a></li>
+                <li><Link to="/features" className="hover:text-white transition">Features</Link></li>
+                <li><Link to="/pricing" className="hover:text-white transition">Pricing</Link></li>
+                <li><Link to="/api" className="hover:text-white transition">API</Link></li>
+                <li><Link to="/integrations" className="hover:text-white transition">Integrations</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="text-white font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white transition">About</a></li>
-                <li><a href="#" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition">Contact</a></li>
+                <li><Link to="/about" className="hover:text-white transition">About</Link></li>
+                <li><Link to="/blog" className="hover:text-white transition">Blog</Link></li>
+                <li><Link to="/careers" className="hover:text-white transition">Careers</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition">Contact</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="text-white font-semibold mb-4">Legal</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white transition">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition">Cookie Policy</a></li>
-                <li><a href="#" className="hover:text-white transition">GDPR</a></li>
+                <li><Link to="/privacy" className="hover:text-white transition">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition">Terms of Service</Link></li>
+                <li><Link to="/cookies" className="hover:text-white transition">Cookie Policy</Link></li>
+                <li><Link to="/gdpr" className="hover:text-white transition">GDPR</Link></li>
               </ul>
             </div>
           </div>
