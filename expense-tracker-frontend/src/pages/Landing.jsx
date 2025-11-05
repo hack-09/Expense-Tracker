@@ -188,7 +188,12 @@ const Landing = () => {
               Login
             </button>
             <button
-              onClick={() => navigate("/preview")} // Changed from /expenses to /preview
+              onClick={() => {
+                const element = document.getElementById("expense-dashboard-demo");
+                if (element) {
+                  element.scrollIntoView({ behavior: "smooth" });
+                }
+              }} // Changed from /expenses to /preview
               className="bg-transparent text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transition transform border-2 border-white/50 hover:border-white"
             >
               Live Demo
@@ -214,7 +219,7 @@ const Landing = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="group perspective-1000"
+              className="group perspective-1000 border-4 border-transparent hover:border-blue-300 rounded-2xl shadow-lg hover:shadow-2xl transition-all bg-gradient-to-br from-white to-gray-50"
             >
               <div className="relative preserve-3d group-hover:rotate-y-180 transition-transform duration-500 w-full h-80">
                 {/* Front of card */}
@@ -306,7 +311,7 @@ const Landing = () => {
           </div>
 
           {/* Interactive Dashboard */}
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+          <div id="expense-dashboard-demo" className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
             {/* Mock Dashboard Header */}
             <div className="bg-gray-900 text-white p-6 flex justify-between items-center">
               <div className="flex items-center gap-4">
