@@ -1,4 +1,4 @@
-# 💰 Expense Tracker - Full Stack Application
+# 💰 Expenzo
 
 A modern, full-stack Expense Tracker application built with **ASP.NET Core Web API** backend and **React** frontend. Manage your personal finances with ease, track expenses by categories, and gain insights into your spending habits.
 
