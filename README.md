@@ -1,315 +1,576 @@
-# 💰 Expenzo
+# 💰 Expenzo - Modern Expense Tracker
 
-A modern, full-stack Expense Tracker application built with **ASP.NET Core Web API** backend and **React** frontend. Manage your personal finances with ease, track expenses by categories, and gain insights into your spending habits.
+<div align="center">
 
-![Expense Tracker](https://img.shields.io/badge/ASP.NET%20Core-8.0-purple?style=for-the-badge&logo=.net)
-![React](https://img.shields.io/badge/React-18.0-blue?style=for-the-badge&logo=react)
-![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-red?style=for-the-badge&logo=microsoft-sql-server)
-![JWT](https://img.shields.io/badge/JWT-Auth-orange?style=for-the-badge&logo=json-web-tokens)
+![Expenzo](https://img.shields.io/badge/Expenzo-Finance_Management-blue?style=for-the-badge&logo=cash-app)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-8.0-purple?style=for-the-badge&logo=.net)
+![React](https://img.shields.io/badge/React-18.0-61dafb?style=for-the-badge&logo=react)
+![SQL Server](https://img.shields.io/badge/SQL_Server-2022-red?style=for-the-badge&logo=microsoft-sql-server)
 
-## ✨ Features
+**Enterprise-Grade Personal Finance Management with Advanced Analytics & Secure Authentication**
 
-### 🔐 Authentication & Security
-- **JWT-based Authentication** - Secure login and registration
-- **Password Hashing** - BCrypt for secure password storage
-- **User-specific Data** - Each user sees only their own expenses
-- **Protected Routes** - Automatic token management
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Coming_Soon-green?style=for-the-badge)](#)
+[![API Docs](https://img.shields.io/badge/📚_API_Documentation-Swagger-orange?style=for-the-badge)](#api-documentation)
 
-### 💸 Expense Management
-- **➕ Add Expenses** - Quick expense entry with categories
-- **✏️ Edit Expenses** - Inline editing for quick updates
-- **🗑️ Delete Expenses** - Safe deletion with confirmation
-- **📊 Categorization** - Organize by Food, Travel, Shopping, Bills, etc.
+</div>
 
-### 🔍 Advanced Filtering & Search
-- **📅 Date Range Filter** - Filter by specific time periods
-- **💰 Amount Range** - Set min/max amount filters
-- **🏷️ Category Filter** - Filter by expense categories
-- **🔍 Real-time Search** - Instant search through expenses
+## 🎯 Overview
 
-### 🎨 User Experience
-- **🌙 Dark Mode** - Toggle between light and dark themes
-- **📱 Responsive Design** - Works perfectly on all devices
-- **⚡ Real-time Updates** - Instant UI updates
-- **📈 Expense Statistics** - Monthly totals and averages
+Expenzo is a comprehensive **full-stack expense tracking solution** built with modern technologies. It provides individuals and businesses with powerful tools to manage finances, analyze spending patterns, and make data-driven financial decisions with enterprise-grade security and performance.
 
-## 🛠 Tech Stack
+## ✨ Key Features
 
-### Backend (ASP.NET Core Web API)
-- **ASP.NET Core 8** - High-performance web framework
-- **Entity Framework Core** - ORM with code-first migrations
-- **SQL Server** - Robust database system
-- **JWT Bearer Authentication** - Secure token-based auth
-- **BCrypt.NET** - Password hashing library
-- **Swagger/OpenAPI** - API documentation
+### 🔐 Enterprise Security
+- **JWT Authentication** with refresh token rotation
+- **BCrypt Password Hashing** with salt rounds
+- **Role-based Access Control** (RBAC) ready
+- **Secure API Endpoints** with rate limiting
+- **Data Encryption** at rest and in transit
 
-### Frontend (React)
-- **React 18** - Modern UI library with hooks
-- **TailwindCSS** - Utility-first CSS framework
-- **Axios** - HTTP client for API calls
-- **React Router** - Client-side routing
-- **Context API** - State management
+### 💰 Advanced Expense Management
+- **Smart Categorization** with custom categories
+- **Recurring Expenses** with automated tracking
+- **Receipt Upload & OCR** for digital records
+- **Multi-currency Support** with real-time conversion
+- **Tax Deduction Tracking** for business expenses
+
+### 📊 Business Intelligence
+- **Real-time Analytics Dashboard** with interactive charts
+- **Spending Trends** with predictive insights
+- **Budget Planning** with alert notifications
+- **Export Capabilities** (PDF, Excel, CSV)
+- **Financial Reports** with custom date ranges
+
+### 🌐 Modern UX/UI
+- **Progressive Web App** (PWA) capabilities
+- **Dark/Light Theme** with system preference detection
+- **Offline Functionality** with sync capabilities
+- **Mobile-First Responsive** design
+- **Accessibility** (WCAG 2.1 compliant)
+
+## 🏗️ System Architecture
+
+### High-Level Architecture
+```
+Frontend (React PWA) → API Gateway → Backend Services → Data Layer → External Services
+```
+
+### Component Architecture
+```mermaid
+graph TB
+    A[React Frontend] --> B[ASP.NET Core API]
+    B --> C[Authentication Service]
+    B --> D[Expense Service]
+    B --> E[Analytics Service]
+    B --> F[Reporting Service]
+    
+    C --> G[SQL Server]
+    D --> G
+    E --> G
+    F --> G
+    
+    B --> H[Redis Cache]
+    E --> I[Chart.js/Recharts]
+    F --> J[PDF Generation]
+    
+    style A fill:#61dafb
+    style B fill:#512bd4
+    style G fill:#d73a49
+```
+
+## 🛠️ Tech Stack
+
+### Backend Excellence
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Framework** | ASP.NET Core 8.0 | High-performance web API |
+| **ORM** | Entity Framework Core 8.0 | Database operations |
+| **Database** | SQL Server 2022 | Enterprise data storage |
+| **Caching** | Redis | Session & query caching |
+| **Authentication** | JWT + BCrypt.NET | Secure access control |
+| **Documentation** | Swagger/OpenAPI | API documentation |
+| **Testing** | xUnit + Moq | Unit & integration tests |
+
+### Frontend Innovation
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| **Framework** | React 18.2 | Modern UI development |
+| **Styling** | TailwindCSS 3.3 | Utility-first CSS |
+| **Charts** | Recharts | Interactive data visualization |
+| **HTTP Client** | Axios | API communication |
+| **Routing** | React Router v6 | Client-side navigation |
+| **State** | Context API + useReducer | Global state management |
+| **PWA** | Workbox | Offline functionality |
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Node.js 18+](https://nodejs.org/)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js 18.0+](https://nodejs.org/)
+- [SQL Server 2022](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [Redis](https://redis.io/download) (optional for caching)
 
-### 1. Clone the Repository
+### Installation & Setup
+
+#### 1. Clone Repository
 ```bash
-git clone https://github.com/your-username/expense-tracker.git
-cd expense-tracker
+git clone https://github.com/your-username/expenzo.git
+cd expenzo
 ```
 
-### 2. Backend Setup (ASP.NET Core API)
+#### 2. Backend Configuration
 
-Navigate to the backend directory:
+**Database Setup:**
 ```bash
-cd ExpenseTrackApi
+# Navigate to backend
+cd Expenzo.Api
+
+# Apply database migrations
+dotnet ef database update
+
+# Seed initial data
+dotnet run seed
 ```
 
-#### Configure Database Connection
-Update `appsettings.json` with your SQL Server connection string:
-
+**Environment Configuration (`appsettings.json`):**
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=ExpenseTrackerDB;Trusted_Connection=True;TrustServerCertificate=True;"
+    "DefaultConnection": "Server=localhost;Database=ExpenzoDB;Trusted_Connection=true;TrustServerCertificate=true;",
+    "Redis": "localhost:6379"
   },
   "Jwt": {
-    "SecretKey": "your-very-strong-secret-key-here-minimum-32-characters",
-    "Issuer": "ExpenseTrackerAPI",
-    "Audience": "ExpenseTrackerClient"
+    "SecretKey": "your-64-character-super-secure-key-for-production-use-only",
+    "Issuer": "ExpenzoAPI",
+    "Audience": "ExpenzoClient",
+    "ExpiryMinutes": 60,
+    "RefreshExpiryDays": 7
+  },
+  "Cors": {
+    "AllowedOrigins": ["http://localhost:3000", "https://yourapp.vercel.app"]
   }
 }
 ```
 
-#### Run Database Migrations
+#### 3. Frontend Setup
 ```bash
-dotnet ef database update
-```
+# Navigate to frontend
+cd ../expenzo-frontend
 
-#### Start the API
-```bash
-dotnet run
-```
-**API Server**: http://localhost:5237
-
-### 3. Frontend Setup (React)
-
-Open a new terminal and navigate to the frontend:
-```bash
-cd expense-tracker-frontend
-```
-
-#### Install Dependencies
-```bash
+# Install dependencies
 npm install
-```
 
-#### Start Development Server
-```bash
+# Start development server
 npm run dev
 ```
-**Frontend**: http://localhost:5173
 
-## 📱 Application Screenshots
+#### 4. Production Build
+```bash
+# Backend
+dotnet publish -c Release -o ./publish
 
-*(Add your screenshots here)*
-- **Login Page** - Clean authentication interface
-- **Dashboard** - Expense overview with statistics
-- **Expense List** - Manage expenses with CRUD operations
-- **Filter Panel** - Advanced filtering options
+# Frontend
+npm run build
+```
 
-## 🔐 Authentication Flow
+## 📊 Database Schema Design
 
-1. **Registration** → `/api/auth/register`
-2. **Login** → `/api/auth/login` → Returns JWT token
-3. **Token Storage** → Saved in browser's localStorage
-4. **Automatic Auth** → Axios interceptor attaches token to requests
-5. **Protected Access** → All expense endpoints require valid JWT
+### Core Entities
+```sql
+-- Users table with enhanced security
+CREATE TABLE Users (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    Username NVARCHAR(50) UNIQUE NOT NULL,
+    Email NVARCHAR(255) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    LastLogin DATETIME2,
+    IsActive BIT DEFAULT 1,
+    Currency NVARCHAR(3) DEFAULT 'USD'
+);
 
-### API Endpoints
+-- Categories with hierarchy support
+CREATE TABLE Categories (
+    Id INT PRIMARY KEY IDENTITY,
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500),
+    ParentCategoryId INT NULL,
+    Color NVARCHAR(7) DEFAULT '#3B82F6',
+    Icon NVARCHAR(50) DEFAULT 'receipt',
+    UserId UNIQUEIDENTIFIER NULL, -- NULL for system categories
+    FOREIGN KEY (ParentCategoryId) REFERENCES Categories(Id),
+    FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
 
-#### Authentication
+-- Expenses with comprehensive tracking
+CREATE TABLE Expenses (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    Title NVARCHAR(200) NOT NULL,
+    Amount DECIMAL(18,2) NOT NULL,
+    CategoryId INT NOT NULL,
+    Description NVARCHAR(1000),
+    ExpenseDate DATE NOT NULL,
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    UpdatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    ReceiptUrl NVARCHAR(500),
+    IsRecurring BIT DEFAULT 0,
+    RecurringFrequency NVARCHAR(20), -- Daily, Weekly, Monthly, Yearly
+    Tags NVARCHAR(500), -- JSON array of tags
+    FOREIGN KEY (UserId) REFERENCES Users(Id),
+    FOREIGN KEY (CategoryId) REFERENCES Categories(Id)
+);
+
+-- Budgets for financial planning
+CREATE TABLE Budgets (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserId UNIQUEIDENTIFIER NOT NULL,
+    CategoryId INT NOT NULL,
+    Amount DECIMAL(18,2) NOT NULL,
+    Month DATE NOT NULL, -- First day of month
+    CreatedAt DATETIME2 DEFAULT GETUTCDATE(),
+    FOREIGN KEY (UserId) REFERENCES Users(Id),
+    FOREIGN KEY (CategoryId) REFERENCES Categories(Id)
+);
+```
+
+## 🔌 API Documentation
+
+### Authentication Endpoints
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/auth/register` | User registration | ❌ |
+| `POST` | `/api/auth/login` | User authentication | ❌ |
+| `POST` | `/api/auth/refresh` | Refresh JWT token | ✅ |
+| `POST` | `/api/auth/logout` | User logout | ✅ |
+
+### Expense Management
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| `GET` | `/api/expenses` | Get user expenses | `page, pageSize, filters` |
+| `POST` | `/api/expenses` | Create new expense | `ExpenseDto` |
+| `PUT` | `/api/expenses/{id}` | Update expense | `ExpenseDto` |
+| `DELETE` | `/api/expenses/{id}` | Delete expense | - |
+| `GET` | `/api/expenses/analytics` | Expense analytics | `startDate, endDate` |
+
+### Sample API Usage
+
+**User Registration:**
 ```http
 POST /api/auth/register
-POST /api/auth/login
-```
-
-#### Expenses (Protected)
-```http
-GET    /api/expenses
-POST   /api/expenses
-PUT    /api/expenses/{id}
-DELETE /api/expenses/{id}
-GET    /api/expenses/filter
-```
-
-#### Categories
-```http
-GET /api/categories
-```
-
-## 🗂 Project Structure
-
-```
-ExpenseTracker/
-│
-├── ExpenseTrackApi/                 # Backend (.NET Core 8)
-│   ├── Controllers/                 # API Controllers
-│   │   ├── AuthController.cs        # Authentication endpoints
-│   │   ├── ExpensesController.cs    # Expense CRUD operations
-│   │   └── CategoriesController.cs  # Category management
-│   ├── Models/                      # Entity Models
-│   │   ├── User.cs                  # User entity
-│   │   ├── Expense.cs               # Expense entity
-│   │   └── Category.cs              # Category entity
-│   ├── Data/                        # Data Layer
-│   │   ├── ApplicationDbContext.cs  # EF Core DbContext
-│   │   └── SeedData.cs              # Database seeding
-│   ├── Services/                    # Business Logic
-│   │   └── AuthService.cs           # Authentication logic
-│   └── Migrations/                  # EF Core Migrations
-│
-├── expense-tracker-frontend/        # Frontend (React)
-│   ├── src/
-│   │   ├── pages/                   # React Pages
-│   │   │   ├── Login.jsx            # Login component
-│   │   │   ├── Register.jsx         # Registration component
-│   │   │   └── Expenses.jsx         # Main expenses dashboard
-│   │   ├── components/              # Reusable Components
-│   │   ├── api/                     # API Configuration
-│   │   │   └── axios.js             # Axios instance with interceptors
-│   │   └── App.jsx                  # Main app component with routing
-│   ├── public/
-│   └── package.json
-│
-└── README.md
-```
-
-## 🧪 API Testing with Postman
-
-### Register a New User
-```http
-POST http://localhost:5237/api/auth/register
 Content-Type: application/json
 
 {
   "username": "john_doe",
   "email": "john@example.com",
-  "passwordHash": "securepassword123"
+  "password": "SecurePass123!",
+  "currency": "USD"
 }
 ```
 
-### User Login
+**Add Expense:**
 ```http
-POST http://localhost:5237/api/auth/login
+POST /api/expenses
+Authorization: Bearer {jwt-token}
 Content-Type: application/json
 
 {
-  "username": "john_doe",
-  "password": "securepassword123"
+  "title": "Monthly Groceries",
+  "amount": 245.75,
+  "categoryId": 3,
+  "expenseDate": "2024-01-15",
+  "description": "Weekly grocery shopping at Whole Foods",
+  "tags": ["groceries", "food", "essential"]
 }
 ```
 
-### Get User Expenses (Protected)
+**Get Analytics:**
 ```http
-GET http://localhost:5237/api/expenses
-Authorization: Bearer <your-jwt-token>
+GET /api/expenses/analytics?startDate=2024-01-01&endDate=2024-01-31
+Authorization: Bearer {jwt-token}
 ```
 
-### Add New Expense
-```http
-POST http://localhost:5237/api/expenses
-Authorization: Bearer <your-jwt-token>
-Content-Type: application/json
+## 📱 Application Features
 
+### Dashboard Overview
+- **Real-time Spending Overview** with monthly comparisons
+- **Category-wise Distribution** with interactive pie charts
+- **Budget vs Actual** spending analysis
+- **Recent Transactions** with quick actions
+- **Financial Health Score** based on spending patterns
+
+### Advanced Filtering & Search
+- **Multi-dimensional Filtering** by date, amount, category, tags
+- **Full-text Search** across expense titles and descriptions
+- **Saved Filter Presets** for frequent queries
+- **Export Filtered Results** in multiple formats
+
+### Smart Analytics
+- **Spending Trends** with forecasting
+- **Category Insights** with comparative analysis
+- **Monthly Reports** with year-over-year comparison
+- **Custom Date Range** analytics
+- **Interactive Visualizations** with drill-down capabilities
+
+## 🔒 Security Implementation
+
+### Authentication Flow
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant Database
+    participant Redis
+    
+    Client->>API: Login Request
+    API->>Database: Verify User Credentials
+    Database-->>API: User Data
+    API->>API: Generate JWT Tokens
+    API->>Redis: Cache Refresh Token
+    API-->>Client: Access + Refresh Tokens
+    
+    Note over Client,API: Subsequent Requests
+    Client->>API: Request with JWT
+    API->>API: Validate JWT Signature
+    API->>Database: Fetch Required Data
+    API-->>Client: Requested Data
+```
+
+### Security Headers Configuration
+```csharp
+// Program.cs - Security Middleware
+app.UseHsts();
+app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
+
+app.Use(async (context, next) =>
 {
-  "title": "Groceries",
-  "amount": 85.50,
-  "categoryId": 1,
-  "date": "2024-01-15"
+    context.Response.Headers.Add("X-Frame-Options", "DENY");
+    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
+    
+    await next();
+});
+```
+
+## 🚀 Deployment
+
+### Backend Deployment (Azure)
+```yaml
+# azure-pipelines.yml
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'Restore'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build'
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish'
+  inputs:
+    command: 'publish'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+```
+
+### Frontend Deployment (Vercel)
+```json
+// vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_API_URL": "https://your-api.azurewebsites.net"
+  }
 }
 ```
 
-## 🌟 Key Features in Detail
+## 🧪 Testing Strategy
 
-### Smart Expense Filtering
-- **Multi-criteria filtering** - Combine category, date, and amount filters
-- **Real-time search** - Instant filtering as you type
-- **Backend & client-side filtering** - Optimized performance
+### Backend Testing
+```csharp
+// Example Unit Test
+public class ExpenseServiceTests
+{
+    [Fact]
+    public async Task CreateExpense_ValidData_ReturnsExpenseDto()
+    {
+        // Arrange
+        var mockRepo = new Mock<IExpenseRepository>();
+        var service = new ExpenseService(mockRepo.Object);
+        var createDto = new CreateExpenseDto 
+        { 
+            Title = "Test Expense", 
+            Amount = 100.50m,
+            CategoryId = 1
+        };
 
-### Secure Authentication
-- **JWT tokens** - Stateless authentication
-- **Automatic token refresh** - Seamless user experience
-- **Password security** - BCrypt hashing with salt
+        // Act
+        var result = await service.CreateExpenseAsync(createDto, Guid.NewGuid());
 
-### Responsive Design
-- **Mobile-first approach** - Perfect on phones and tablets
-- **Dark mode support** - Easy on the eyes
-- **Accessible UI** - Proper contrast and keyboard navigation
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(createDto.Title, result.Title);
+        mockRepo.Verify(x => x.AddAsync(It.IsAny<Expense>()), Times.Once);
+    }
+}
+```
 
-## 🐛 Troubleshooting
+### Frontend Testing
+```javascript
+// Example Component Test
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ExpenseForm } from './ExpenseForm';
 
-### Common Issues
-
-1. **Database Connection Failed**
-   - Verify SQL Server is running
-   - Check connection string in `appsettings.json`
-   - Ensure database exists or use `TrustServerCertificate=true`
-
-2. **Migration Errors**
-   ```bash
-   dotnet ef migrations remove
-   dotnet ef migrations add InitialCreate
-   dotnet ef database update
-   ```
-
-3. **CORS Issues**
-   - Ensure backend CORS is configured for frontend URL
-   - Check `Program.cs` for CORS policy setup
-
-4. **JWT Token Issues**
-   - Verify secret key length (minimum 32 characters)
-   - Check token expiration settings
+test('submits expense form with valid data', async () => {
+  const mockSubmit = jest.fn();
+  
+  render(<ExpenseForm onSubmit={mockSubmit} />);
+  
+  fireEvent.change(screen.getByLabelText(/title/i), {
+    target: { value: 'Test Expense' }
+  });
+  
+  fireEvent.change(screen.getByLabelText(/amount/i), {
+    target: { value: '100.50' }
+  });
+  
+  fireEvent.click(screen.getByRole('button', { name: /add expense/i }));
+  
+  expect(mockSubmit).toHaveBeenCalledWith({
+    title: 'Test Expense',
+    amount: 100.50,
+    categoryId: expect.any(Number)
+  });
+});
+```
 
 ## 🤝 Contributing
 
-We welcome contributions! Please feel free to submit pull requests or open issues for bugs and feature requests.
+We welcome contributions! Please see our development guide:
 
-### Development Workflow
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Development Setup
+1. **Fork the repository**
+2. **Set up development environment**
+   ```bash
+   git clone https://github.com/your-username/expenzo.git
+   cd expenzo
+   ./scripts/setup-dev.sh
+   ```
 
-### Code Standards
-- Follow C# and React best practices
-- Include meaningful commit messages
-- Update documentation for new features
-- Add tests for new functionality
+3. **Follow our coding standards**
+   - Backend: C# coding conventions
+   - Frontend: ESLint + Prettier configuration
+   - Commit messages: Conventional commits
 
-## 📜 License
+### Pull Request Process
+1. Create feature branch from `develop`
+2. Implement changes with tests
+3. Update documentation
+4. Submit PR with detailed description
+
+## 📈 Performance Optimization
+
+### Backend Optimizations
+- **EF Core Query Optimization** with AsNoTracking
+- **Redis Caching** for frequent queries
+- **Pagination** for large datasets
+- **Compressed Responses** with gzip
+- **Database Indexing** strategy
+
+### Frontend Optimizations
+- **Code Splitting** with React.lazy
+- **Memoization** with React.memo and useMemo
+- **Virtualized Lists** for large datasets
+- **Image Optimization** with WebP format
+- **Bundle Analysis** with webpack-bundle-analyzer
+
+## 🐛 Troubleshooting
+
+### Common Issues & Solutions
+
+**Database Connection Issues:**
+```bash
+# Check SQL Server service
+sudo systemctl status mssql-server
+
+# Verify connection string
+dotnet user-secrets list
+
+# Reset migrations if needed
+dotnet ef migrations remove
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+**Frontend Build Issues:**
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Check environment variables
+npm run check-env
+```
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- ASP.NET Core team for the excellent web framework
-- React team for the powerful UI library
-- TailwindCSS for the utility-first CSS framework
-- Contributors and testers who helped improve this application
+- **ASP.NET Core Team** for the robust web framework
+- **React Team** for the revolutionary UI library
+- **TailwindCSS** for the utility-first CSS approach
+- **Chart.js & Recharts** for beautiful data visualization
+- **SQL Server Team** for enterprise-grade database solutions
 
 ---
 
 <div align="center">
 
-**Built with ❤️ using ASP.NET Core, React, and SQLite**
+### ⭐ Star this repository if you find it helpful!
 
-[Report Bug](https://github.com/your-username/expense-tracker/issues) · [Request Feature](https://github.com/your-username/expense-tracker/issues)
+**Built with ❤️ using ASP.NET Core, React, and modern web technologies**
+
+[Report Bug](https://github.com/your-username/expenzo/issues) · [Request Feature](https://github.com/your-username/expenzo/issues)
 
 </div>
+
+---
